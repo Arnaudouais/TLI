@@ -3,7 +3,6 @@ package grapher.ui;
 import static java.lang.Math.*;
 
 
-import java.util.Vector;
 
 import javafx.util.converter.DoubleStringConverter;
 
@@ -38,7 +37,6 @@ public class GrapherCanvas extends Canvas {
 	protected double xmin, xmax;
 	protected double ymin, ymax;
 
-	protected ObservableList<Function> functions = FXCollections.observableArrayList();
 	protected ObservableList<FunctionInfos> fctInfo= FXCollections.observableArrayList();
 	
 	public GrapherCanvas(Parameters params) {
@@ -47,12 +45,9 @@ public class GrapherCanvas extends Canvas {
 		ymin = -1.5;   ymax = 1.5;
 		
 		for(String param: params.getRaw()) {
-			functions.add(FunctionFactory.createFunction(param));
+			fctInfo.add(new FunctionInfos(FunctionFactory.createFunction(param),false));
 		}
 		
-		for(Function f : functions){
-			fctInfo.add(new FunctionInfos(f,false));
-		}
 		
 		this.addEventHandler(MouseEvent.ANY, new Handler(this));
 		this.addEventHandler(ScrollEvent.ANY, new ScrollHandler(this));
@@ -217,6 +212,19 @@ public class GrapherCanvas extends Canvas {
 		xmin = min(x0, x1); xmax = max(x0, x1);
 		ymin = min(y0, y1); ymax = max(y0, y1);
 		redraw();
+	}
+	
+	protected void addFct(String exp){
+		try{
+			fctInfo.add(new FunctionInfos(FunctionFactory.createFunction(exp),false));
+		}
+		catch (Exception e){
+			System.out.println("Mauvaise expression");
+		}
+	}
+	
+	protected void removeFct(ObservableList<FunctionInfos> selectedItems){
+		fctInfo.removeAll(selectedItems);
 	}
 	
 }
